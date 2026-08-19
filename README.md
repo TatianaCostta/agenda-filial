@@ -41,4 +41,4 @@ O sistema foi testado com a equipe da filial, o que permitiu identificar ajustes
 
 ## Aprendizados
 
-Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto — habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
+Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto, habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
