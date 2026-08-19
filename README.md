@@ -1,6 +1,6 @@
-# AGENDA 8340
+# Agenda Filial
 
-Sistema web criado para a filial 8340 da CVC Viagens (MAG Shopping, João Pessoa/PB), para substituir controles manuais de escala de folgas e acompanhamento de viagens de clientes por uma ferramenta centralizada e com alertas automáticos.
+Sistema web criado para uma filial de agência de viagens, para substituir controles manuais de escala de folgas e acompanhamento de viagens de clientes por uma ferramenta centralizada e com alertas automáticos.
 
 ## O problema
 
@@ -41,4 +41,4 @@ O sistema foi testado com a equipe da filial, o que permitiu identificar ajustes
 
 ## Aprendizados
 
-Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto, habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
+Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto — habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
