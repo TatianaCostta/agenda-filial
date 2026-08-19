@@ -8,7 +8,7 @@ A gestão da escala de folgas de fins de semana e feriados trabalhados era feita
 
 ## Meu papel
 
-Concebi, especifiquei os requisitos e validei o sistema com a equipe da filial, atuando como responsável de produto ao longo de todo o processo — da identificação do problema ao teste com usuários reais. O desenvolvimento foi conduzido com apoio de IA generativa, sob minha orientação e decisões de escopo.
+Concebi, especifiquei os requisitos e validei o sistema com a equipe da filial, atuando como responsável de produto ao longo de todo o processo, da identificação do problema ao teste com usuários reais. O desenvolvimento foi conduzido com apoio de IA generativa, sob minha orientação e decisões de escopo.
 
 ## Requisitos levantados
 
@@ -32,7 +32,7 @@ Com base nas necessidades da equipe, defini:
 
 ## Processo de validação
 
-O sistema foi testado com a equipe da filial, o que permitiu identificar ajustes necessários — como a inclusão de um campo de anotações no cadastro de embarque e melhorias de acesso via celular — incorporados em iterações seguintes.
+O sistema foi testado com a equipe da filial, o que permitiu identificar ajustes necessários, como a inclusão de um campo de anotações no cadastro de embarque e melhorias de acesso via celular, incorporados em iterações seguintes.
 
 ## Stack
 
@@ -41,4 +41,4 @@ O sistema foi testado com a equipe da filial, o que permitiu identificar ajustes
 
 ## Aprendizados
 
-Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto — habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
+Este projeto reforçou minha experiência em levantamento de requisitos junto a usuários reais, priorização de funcionalidades com base em impacto operacional, e validação iterativa de produto, habilidades centrais para atuação em Coordenação de Projetos e Product Ownership.
