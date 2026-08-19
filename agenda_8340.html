@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGENDA 8340</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2E4B78;
+    --ink-soft:#4C6690;
+    --gold:#D4A24C;
+    --gold-soft:#F1DFB8;
+    --bg:#F6F3EC;
+    --paper:#FFFFFF;
+    --line:#E4DDCB;
+    --green:#4C7A63;
+    --green-bg:#E6EFE9;
+    --coral:#C6553F;
+    --coral-bg:#F6E3DE;
+    --blue:#3E6B8A;
+    --blue-bg:#E4EBEF;
+    --muted:#8A8577;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Manrope',sans-serif;}
+  .app{max-width:1080px;margin:0 auto;padding:20px 18px 60px;}
+
+  /* Header */
+  .header{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    flex-wrap:wrap;gap:14px;margin-bottom:18px;
+  }
+  .header h1{font-size:22px;font-weight:800;margin:0 0 2px;letter-spacing:-0.01em;}
+  .header .sub{font-size:13px;color:var(--muted);}
+  .account-box{
+    display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 16px;
+  }
+  .account-box .account-name{font-weight:700;font-size:13px;color:var(--ink);}
+  .account-box .account-role{font-size:11px;color:var(--muted);margin-right:4px;}
+  .account-box .btn.ghost{padding:6px 12px;border-radius:999px;background:var(--bg);}
+
+  /* Login */
+  .login-wrap{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:20px 0;}
+  .login-card{
+    width:100%;max-width:360px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 24px rgba(46,75,120,.06);
+  }
+  .login-card h1{font-size:19px;margin:0;text-align:center;}
+  .login-card .sub{font-size:12.5px;color:var(--muted);text-align:center;margin-bottom:6px;}
+  .login-title{font-family:'Manrope';font-weight:800;font-size:14.5px;margin:4px 0 2px;}
+  .login-error{background:var(--coral-bg);color:var(--coral);font-size:12.5px;padding:8px 10px;border-radius:8px;}
+  .login-hint{font-size:11.5px;color:var(--muted);line-height:1.4;}
+  .btn.full{width:100%;text-align:center;justify-content:center;padding:11px 16px;}
+
+  /* Alerts */
+  .alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+  .alert{
+    display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:10px;font-size:13.5px;line-height:1.4;
+  }
+  .alert .dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none;}
+  .alert.off{background:var(--blue-bg);color:var(--blue);}
+  .alert.off .dot{background:var(--blue);}
+  .alert.checkin{background:var(--gold-soft);color:#8A6420;}
+  .alert.checkin .dot{background:var(--gold);}
+  .alert.flight{background:var(--coral-bg);color:var(--coral);}
+  .alert.flight .dot{background:var(--coral);}
+  .alert b{font-weight:700;}
+  .alert-empty{font-size:13px;color:var(--muted);padding:8px 2px;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .tab{
+    padding:10px 14px;font-family:'Manrope';font-weight:700;font-size:13.5px;color:var(--muted);
+    cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .tab.active{color:var(--ink);border-color:var(--gold);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* Calendar */
+  .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .cal-nav .month-label{font-family:'Manrope';font-weight:800;font-size:17px;}
+  .cal-nav button{
+    border:1px solid var(--line);background:var(--paper);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--ink);
+  }
+  .cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  }
+  .cal-dow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:center;padding-bottom:4px;}
+  .cal-cell{
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;min-height:92px;padding:8px 7px 7px;
+    cursor:pointer;position:relative;display:flex;flex-direction:column;gap:4px;
+    background-image:radial-gradient(circle at 0 0, transparent 5px, var(--paper) 5.5px);
+  }
+  .cal-cell:hover{border-color:var(--gold);}
+  .cal-cell.empty{background:transparent;border:none;cursor:default;}
+  .cal-cell.today{box-shadow:inset 0 0 0 2px var(--gold);}
+  .cal-cell .date-num{font-family:'Manrope';font-weight:800;font-size:13px;}
+  .cal-cell .chips{display:flex;flex-direction:column;gap:3px;overflow:hidden;}
+  .chip{
+    font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .chip.tag-red{background:#F6DAD5;color:#A6402C;}
+  .chip.tag-blue{background:var(--blue-bg);color:var(--blue);}
+  .chip.tag-green{background:var(--green-bg);color:var(--green);}
+  .chip.tag-gold{background:var(--gold-soft);color:#8A6420;}
+  .chip.tag-purple{background:#E7DEF2;color:#6A4A9A;}
+  .seller-chip{color:#fff;}
+
+  /* Trips */
+  .trip-form,.seller-form{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:18px;
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  }
+  .trip-form h3,.seller-form h3{grid-column:1/-1;margin:0 0 2px;font-size:14px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  .field input,.field select,.field textarea{
+    font-family:'Inter';padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:#FCFBF8;
+  }
+  .field.full{grid-column:1/-1;}
+  .btn{
+    font-family:'Inter';font-weight:700;font-size:13px;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;
+    background:var(--ink);color:#fff;
+  }
+  .btn.gold{background:var(--gold);color:#3A2A05;}
+  .btn.ghost{background:transparent;color:var(--coral);padding:6px 8px;font-size:12px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  .stub-list{display:flex;flex-direction:column;gap:10px;}
+  .stub{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;display:flex;overflow:hidden;
+  }
+  .stub .side{
+    width:76px;flex:none;background:var(--ink);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:'Manrope';padding:8px 4px;position:relative;
+  }
+  .stub .side .d{font-size:20px;font-weight:800;line-height:1;}
+  .stub .side .m{font-size:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.8;}
+  .stub .side::after{
+    content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;background:var(--bg);border-radius:50%;
+  }
+  .stub .main{flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
+  .stub .client{font-weight:700;font-size:14.5px;}
+  .stub .meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
+  .stub .badges{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;}
+  .badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;}
+  .badge.flight{background:var(--coral-bg);color:var(--coral);}
+  .badge.checkin{background:var(--gold-soft);color:#8A6420;}
+  .badge.ok{background:var(--green-bg);color:var(--green);}
+
+  .seller-row{
+    display:flex;align-items:center;justify-content:space-between;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;margin-bottom:8px;
+  }
+  .seller-row .name{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;}
+  .swatch{width:12px;height:12px;border-radius:50%;flex:none;}
+
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13.5px;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(22,35,58,0.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--paper);border-radius:16px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;
+  }
+  .modal h2{font-size:16px;margin:0 0 4px;}
+  .modal .modal-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;}
+  .modal-close{float:right;border:none;background:transparent;font-size:18px;cursor:pointer;color:var(--muted);}
+  .entry-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+  .entry{
+    display:flex;justify-content:space-between;align-items:center;background:#FCFBF8;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;
+  }
+  .entry .txt{display:flex;flex-direction:column;gap:1px;}
+  .entry .txt .k{font-weight:700;}
+  .entry .txt .lock{font-size:10.5px;color:var(--muted);}
+  .add-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:#FCFBF8;border:1px dashed var(--line);border-radius:8px;padding:10px;}
+  .add-row select,.add-row input{font-family:'Inter';padding:7px 8px;border:1px solid var(--line);border-radius:7px;font-size:12.5px;}
+  .color-dot{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+  .color-dot.picked{border-color:var(--ink);}
+  .section-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin:14px 0 6px;}
+
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;}
+  .note{font-size:12px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:22px;line-height:1.5;}
+
+  @media(max-width:640px){
+    .app{padding:14px 10px 40px;}
+    .header{flex-direction:column;}
+    .role-switch{align-self:flex-start;}
+    .header h1{font-size:19px;}
+    .cal-grid{gap:3px;}
+    .cal-cell{min-height:56px;padding:5px 4px;border-radius:8px;}
+    .cal-cell .date-num{font-size:11px;}
+    .cal-dow{font-size:8.5px;padding-bottom:2px;}
+    .chip{font-size:8px;padding:1px 4px;}
+    .trip-form,.seller-form{grid-template-columns:1fr;padding:14px;}
+    .stub{flex-direction:column;}
+    .stub .side{width:100%;flex-direction:row;gap:6px;padding:6px 10px;justify-content:flex-start;}
+    .stub .side::after{display:none;}
+    .stub [data-remove-trip]{margin:0 14px 12px !important;align-self:flex-end;}
+    .modal{padding:16px;max-height:92vh;}
+    .add-row{flex-direction:column;align-items:stretch;}
+    .add-row select,.add-row input{width:100%;}
+  }
+  @media(max-width:400px){
+    .cal-cell{min-height:46px;}
+    .chip{display:none;}
+    .cal-cell::after{content:"•";display:block;text-align:center;color:var(--gold);font-size:10px;}
+    .cal-cell:not(:has(.chips > *))::after{content:"";}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading" id="loading">Carregando escala e agenda…</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script>
+/* ---------- Firebase ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyA1UxZbK0BoioEO3QiGUaOL4pUZc81wTkk",
+  authDomain: "agenda-cvc-8340.firebaseapp.com",
+  projectId: "agenda-cvc-8340",
+  storageBucket: "agenda-cvc-8340.firebasestorage.app",
+  messagingSenderId: "99881856341",
+  appId: "1:99881856341:web:263b2f9e209f28a12a93dc"
+};
+firebase.initializeApp(firebaseConfig);
+// App "Secondary" só é usada para o gerente cadastrar novos usuários
+// sem derrubar a própria sessão que está logada no app principal.
+const secondaryApp = firebase.initializeApp(firebaseConfig, 'Secondary');
+const auth = firebase.auth();
+const secondaryAuth = secondaryApp.auth();
+const db = firebase.firestore();
+
+/* Transforma "Nome" + PIN de 4 dígitos num login/senha válidos para o
+   Firebase Authentication (que exige um formato de e-mail e senha com
+   6+ caracteres). Isso fica invisível para quem usa o sistema. */
+function loginEmail(name){
+  const slug = (name||'').trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'.').replace(/^\.+|\.+$/g,'');
+  return slug + '@agenda-cvc-8340.local';
+}
+function loginPassword(pin){
+  return 'cvc8340-' + pin;
+}
+
+const SELLER_COLORS = ['#3E6B8A','#4C7A63','#C6553F','#8A5FB0','#B0813E','#5A7A9A'];
+const NOTICE_TYPES = ['Consulta Médica','Atestado','Aviso'];
+const SHIFT_TYPES = ['Folga','Feriado Trabalhado','Escala Especial'];
+const TAG_COLORS = ['red','blue','green','gold','purple'];
+const DOW = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+let state = {
+  sellers: [], schedule: [], tags: [], notices: [], trips: [],
+  role: null, // 'gerente' | 'vendedor' — definido pela conta autenticada, não é mais um botão livre
+  accountName: null,
+  currentSellerId: null,
+  viewYear: new Date().getFullYear(),
+  viewMonth: new Date().getMonth(),
+  tab: 'escala'
+};
+let currentModalDate = null;
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function pad(n){ return n<10?'0'+n:''+n; }
+function toISO(y,m,d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
+function todayISO(){ const t=new Date(); return toISO(t.getFullYear(),t.getMonth(),t.getDate()); }
+function daysBetween(isoLater, isoEarlier){
+  const a = new Date(isoLater+'T00:00:00'), b = new Date(isoEarlier+'T00:00:00');
+  return Math.round((a-b)/86400000);
+}
+function fmtDate(iso){
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function sellerColor(id){
+  const idx = state.sellers.findIndex(s=>s.id===id);
+  return SELLER_COLORS[idx>=0?idx%SELLER_COLORS.length:0];
+}
+
+/* ---------- Sincronização em tempo real com o Firestore ---------- */
+const COLLECTIONS = ['sellers','schedule','tags','notices','trips'];
+const loadedCollections = new Set();
+let unsubscribeData = [];
+
+function onDataUpdate(key){
+  loadedCollections.add(key);
+  // só renderiza a primeira vez depois que as 5 coleções chegaram ao menos uma vez
+  if(loadedCollections.size >= COLLECTIONS.length) render();
+}
+
+function handleFirestoreError(err){
+  console.error('Firestore error:', err);
+  const app = document.getElementById('app');
+  if(app){
+    app.innerHTML = `<div class="loading">Não foi possível conectar ao banco de dados.<br>
+      Verifique sua internet ou as regras de acesso do Firestore.<br>
+      <small style="color:var(--muted)">${(err && err.message) || ''}</small></div>`;
+  }
+}
+
+function attachListeners(){
+  unsubscribeData.forEach(u=>u());
+  unsubscribeData = [];
+  loadedCollections.clear();
+
+  unsubscribeData.push(db.collection('sellers').onSnapshot(snap=>{
+    state.sellers = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    onDataUpdate('sellers');
+  }, handleFirestoreError));
+
+  unsubscribeData.push(db.collection('schedule').onSnapshot(snap=>{
+    state.schedule = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    onDataUpdate('schedule');
+  }, handleFirestoreError));
+
+  unsubscribeData.push(db.collection('tags').onSnapshot(snap=>{
+    state.tags = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    onDataUpdate('tags');
+  }, handleFirestoreError));
+
+  unsubscribeData.push(db.collection('notices').onSnapshot(snap=>{
+    state.notices = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    onDataUpdate('notices');
+  }, handleFirestoreError));
+
+  unsubscribeData.push(db.collection('trips').onSnapshot(snap=>{
+    state.trips = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    onDataUpdate('trips');
+  }, handleFirestoreError));
+}
+
+/* ---------- Login / conta ---------- */
+async function renderLogin(opts={}){
+  const app = document.getElementById('app');
+  app.innerHTML = `<div class="loading">Carregando…</div>`;
+  let needsBootstrap = false;
+  try{
+    const sys = await db.collection('system').doc('gerente_setup_done').get();
+    needsBootstrap = !sys.exists;
+  }catch(e){ console.error(e); }
+
+  app.innerHTML = `
+    <div class="login-wrap">
+      <div class="login-card">
+        <h1>AGENDA 8340</h1>
+        <div class="sub">Filial 8340 · MAG Shopping, João Pessoa</div>
+        ${needsBootstrap ? `
+          <div class="login-title">Primeiro acesso — criar o usuário do gerente</div>
+          <div class="field full"><label>Seu nome</label><input type="text" id="loginName" placeholder="Nome completo"></div>
+          <div class="field full"><label>Criar senha (4 números)</label><input type="password" inputmode="numeric" maxlength="4" id="loginPin" placeholder="••••"></div>
+          <div class="field full"><label>Confirmar senha</label><input type="password" inputmode="numeric" maxlength="4" id="loginPin2" placeholder="••••"></div>
+          ${opts.error ? `<div class="login-error">${opts.error}</div>` : ''}
+          <button class="btn gold full" id="bootstrapBtn">Criar acesso do gerente</button>
+          <div class="login-hint">Esta tela só aparece uma vez, para criar o primeiro acesso (gerente). Depois, o gerente cadastra cada colaborador dentro do sistema.</div>
+        ` : `
+          <div class="login-title">Entrar</div>
+          <div class="field full"><label>Nome</label><input type="text" id="loginName" placeholder="Seu nome"></div>
+          <div class="field full"><label>Senha (4 números)</label><input type="password" inputmode="numeric" maxlength="4" id="loginPin" placeholder="••••"></div>
+          ${opts.error ? `<div class="login-error">${opts.error}</div>` : ''}
+          <button class="btn gold full" id="loginBtn">Entrar</button>
+        `}
+      </div>
+    </div>
+  `;
+
+  const enterOnReturn = (ids, btn)=>{
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('keydown', e=>{ if(e.key==='Enter') btn.click(); });
+    });
+  };
+
+  const bootstrapBtn = document.getElementById('bootstrapBtn');
+  if(bootstrapBtn){
+    enterOnReturn(['loginName','loginPin','loginPin2'], bootstrapBtn);
+    bootstrapBtn.onclick = async ()=>{
+      const name = document.getElementById('loginName').value.trim();
+      const pin = document.getElementById('loginPin').value.trim();
+      const pin2 = document.getElementById('loginPin2').value.trim();
+      if(!name){ renderLogin({error:'Informe seu nome.'}); return; }
+      if(!/^\d{4}$/.test(pin)){ renderLogin({error:'A senha deve ter exatamente 4 números.'}); return; }
+      if(pin!==pin2){ renderLogin({error:'As senhas não coincidem.'}); return; }
+      bootstrapBtn.disabled = true;
+      try{
+        const cred = await auth.createUserWithEmailAndPassword(loginEmail(name), loginPassword(pin));
+        await db.collection('accounts').doc(cred.user.uid).set({name, role:'gerente'});
+        await db.collection('system').doc('gerente_setup_done').set({createdAt: new Date().toISOString()});
+        // a partir daqui, onAuthStateChanged assume e carrega o app
+      }catch(e){
+        console.error(e);
+        let msg = 'Não foi possível criar o acesso. Tente novamente.';
+        if(e.code==='auth/email-already-in-use') msg = 'Já existe um usuário com esse nome. Use o nome completo.';
+        if(e.code==='auth/weak-password') msg = 'Senha muito simples para o Firebase aceitar — tente outra combinação de 4 números.';
+        renderLogin({error: msg});
+      }
+    };
+  }
+
+  const loginBtn = document.getElementById('loginBtn');
+  if(loginBtn){
+    enterOnReturn(['loginName','loginPin'], loginBtn);
+    loginBtn.onclick = async ()=>{
+      const name = document.getElementById('loginName').value.trim();
+      const pin = document.getElementById('loginPin').value.trim();
+      if(!name || !/^\d{4}$/.test(pin)){ renderLogin({error:'Preencha seu nome e a senha de 4 números.'}); return; }
+      loginBtn.disabled = true;
+      try{
+        await auth.signInWithEmailAndPassword(loginEmail(name), loginPassword(pin));
+      }catch(e){
+        console.error(e);
+        renderLogin({error:'Nome ou senha incorretos.'});
+      }
+    };
+  }
+}
+
+auth.onAuthStateChanged(async (user)=>{
+  if(unsubscribeData.length){ unsubscribeData.forEach(u=>u()); unsubscribeData = []; }
+  if(!user){
+    state.role = null; state.accountName = null; state.currentSellerId = null;
+    renderLogin();
+    return;
+  }
+  try{
+    const snap = await db.collection('accounts').doc(user.uid).get();
+    if(!snap.exists){
+      await auth.signOut();
+      renderLogin({error:'Esta conta ainda não foi configurada. Fale com o gerente.'});
+      return;
+    }
+    const acc = snap.data();
+    state.role = acc.role === 'gerente' ? 'gerente' : 'vendedor';
+    state.accountName = acc.name;
+    state.currentSellerId = acc.sellerId || null;
+    attachListeners();
+  }catch(e){
+    console.error(e);
+    renderLogin({error:'Erro ao carregar sua conta. Verifique sua internet e tente novamente.'});
+  }
+});
+
+/* ---------- Alerts ---------- */
+function computeAlerts(){
+  const alerts = [];
+  const today = todayISO();
+  // folga em 24h (amanhã)
+  const tmw = new Date(); tmw.setDate(tmw.getDate()+1);
+  const tmwISO = toISO(tmw.getFullYear(), tmw.getMonth(), tmw.getDate());
+  state.schedule.filter(s=>s.date===tmwISO && (s.type==='Folga'||s.type==='Feriado Trabalhado')).forEach(s=>{
+    alerts.push({type:'off', text: `Amanhã (${fmtDate(s.date)}) <b>${s.sellerName}</b> está com ${s.type.toLowerCase()} registrada — combine quem faz a abertura da loja.`});
+  });
+  // viagens
+  state.trips.forEach(t=>{
+    const diff = daysBetween(t.departureDate, today);
+    const checkinDays = t.destino === 'Internacional' ? 1 : 2;
+    if(diff === checkinDays){
+      alerts.push({type:'checkin', text: `Check-in liberado: cliente <b>${t.clientName}</b> (${fmtDate(t.departureDate)}) — colaborador ${t.sellerName}, avise que o check-in já pode ser feito.`});
+    }
+    if(diff === 7){
+      alerts.push({type:'flight', text: `Embarque em 7 dias: cliente <b>${t.clientName}</b> (${fmtDate(t.departureDate)}) — colaborador ${t.sellerName}, confira o status do voo.`});
+    }
+  });
+  return alerts;
+}
+
+/* ---------- Render root ---------- */
+function render(){
+  const app = document.getElementById('app');
+  const alerts = computeAlerts();
+  app.innerHTML = `
+    <div class="header">
+      <div>
+        <h1>AGENDA 8340</h1>
+        <div class="sub">Filial 8340 · MAG Shopping, João Pessoa</div>
+      </div>
+      <div class="account-box">
+        <div>
+          <div class="account-name">${state.accountName || ''}</div>
+          <div class="account-role">${state.role==='gerente' ? 'Gerente' : 'Colaborador'}</div>
+        </div>
+        <button class="btn ghost" id="logoutBtn">Sair</button>
+      </div>
+    </div>
+
+    <div class="alerts">
+      ${alerts.length ? alerts.map(a=>`<div class="alert ${a.type}"><div class="dot"></div><div>${a.text}</div></div>`).join('')
+        : '<div class="alert-empty">Sem alertas no momento. Alertas de folga (24h), embarque (48h e 7 dias) aparecem aqui quando o app é aberto.</div>'}
+    </div>
+
+    <div class="tabs">
+      <div class="tab ${state.tab==='escala'?'active':''}" data-tab="escala">Escala</div>
+      <div class="tab ${state.tab==='viagens'?'active':''}" data-tab="viagens">Agenda de Viagens</div>
+      ${state.role==='gerente' ? `<div class="tab ${state.tab==='vendedores'?'active':''}" data-tab="vendedores">Colaboradores</div>` : ''}
+    </div>
+
+    <div class="panel ${state.tab==='escala'?'active':''}" id="panel-escala"></div>
+    <div class="panel ${state.tab==='viagens'?'active':''}" id="panel-viagens"></div>
+    <div class="panel ${state.tab==='vendedores'?'active':''}" id="panel-vendedores"></div>
+
+    <div class="note">Este sistema grava cada informação em tempo real no banco de dados da filial (Firestore) — funciona salvando de verdade em qualquer navegador, celular ou computador que abrir este arquivo, com internet. Os alertas aparecem quando alguém abre o app — não há envio automático por WhatsApp/e-mail.</div>
+  `;
+
+  document.getElementById('logoutBtn').onclick = ()=>{ closeModal(); auth.signOut(); };
+  document.querySelectorAll('.tab').forEach(t=>{ t.onclick = ()=>{ state.tab = t.dataset.tab; render(); }; });
+
+  if(state.tab==='escala') renderCalendar();
+  if(state.tab==='viagens') renderTrips();
+  if(state.tab==='vendedores' && state.role==='gerente') renderSellers();
+
+  // se um modal de dia estiver aberto, atualiza o conteúdo dele com os dados mais recentes
+  if(currentModalDate) openDayModal(currentModalDate);
+}
+
+/* ---------- Calendar ---------- */
+function renderCalendar(){
+  const panel = document.getElementById('panel-escala');
+  const y = state.viewYear, m = state.viewMonth;
+  const first = new Date(y,m,1);
+  let startDow = first.getDay(); // 0=Sun
+  startDow = (startDow+6)%7; // convert to Monday=0
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const cells = [];
+  for(let i=0;i<startDow;i++) cells.push(null);
+  for(let d=1; d<=daysInMonth; d++) cells.push(d);
+
+  panel.innerHTML = `
+    <div class="cal-nav">
+      <button id="prevM">‹</button>
+      <div class="month-label">${MONTHS[m]} ${y}</div>
+      <button id="nextM">›</button>
+    </div>
+    <div class="cal-grid">
+      ${DOW.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+      ${cells.map(d=>{
+        if(d===null) return `<div class="cal-cell empty"></div>`;
+        const iso = toISO(y,m,d);
+        const isToday = iso===todayISO();
+        const shifts = state.schedule.filter(s=>s.date===iso);
+        const dayTags = state.tags.filter(t=>t.date===iso);
+        const dayNotices = state.notices.filter(n=>n.date===iso);
+        const chips = [
+          ...shifts.map(s=>`<div class="chip seller-chip" style="background:${sellerColor(s.sellerId)}">${s.sellerName.split(' ')[0]} · ${s.type}</div>`),
+          ...dayNotices.map(n=>`<div class="chip tag-blue">${n.sellerName.split(' ')[0]} · ${n.type}</div>`),
+          ...dayTags.map(t=>`<div class="chip tag-${t.color}">${t.text}</div>`)
+        ].slice(0,4).join('');
+        return `<div class="cal-cell ${isToday?'today':''}" data-date="${iso}">
+          <div class="date-num">${d}</div>
+          <div class="chips">${chips}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('prevM').onclick = ()=>{ state.viewMonth--; if(state.viewMonth<0){state.viewMonth=11; state.viewYear--;} renderCalendar(); };
+  document.getElementById('nextM').onclick = ()=>{ state.viewMonth++; if(state.viewMonth>11){state.viewMonth=0; state.viewYear++;} renderCalendar(); };
+  panel.querySelectorAll('.cal-cell[data-date]').forEach(c=>{ c.onclick = ()=> openDayModal(c.dataset.date); });
+}
+
+function openDayModal(iso){
+  currentModalDate = iso;
+  const modal = document.getElementById('modal');
+  const overlay = document.getElementById('overlay');
+  const shifts = state.schedule.filter(s=>s.date===iso);
+  const dayTags = state.tags.filter(t=>t.date===iso);
+  const dayNotices = state.notices.filter(n=>n.date===iso);
+
+  modal.innerHTML = `
+    <button class="modal-close" id="closeModal">✕</button>
+    <h2>${fmtDate(iso)}</h2>
+    <div class="modal-sub">${state.role==='gerente' ? 'Gerencie a escala e os avisos deste dia.' : 'Consulte a escala e registre um aviso pessoal.'}</div>
+
+    <div class="section-label">Escala do dia</div>
+    <div class="entry-list" id="shiftList">
+      ${shifts.length ? shifts.map(s=>`
+        <div class="entry">
+          <div class="txt"><span class="k">${s.sellerName} — ${s.type}</span><span class="lock">Definido pelo gerente</span></div>
+          ${state.role==='gerente' ? `<button class="btn ghost" data-remove-shift="${s.id}">Remover</button>` : ''}
+        </div>`).join('') : '<div class="lock" style="color:var(--muted);font-size:12.5px;">Nenhuma escala especial para o dia.</div>'}
+    </div>
+    ${state.role==='gerente' ? `
+      <div class="add-row" id="addShiftRow">
+        <select id="shiftSeller">${state.sellers.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+        <select id="shiftType">${SHIFT_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+        <button class="btn gold" id="addShiftBtn">Adicionar</button>
+      </div>` : ''}
+
+    <div class="section-label">Avisos com etiqueta</div>
+    <div class="entry-list" id="tagList">
+      ${dayTags.length ? dayTags.map(t=>`
+        <div class="entry">
+          <div class="txt"><span class="chip tag-${t.color}">${t.text}</span></div>
+          ${state.role==='gerente' ? `<button class="btn ghost" data-remove-tag="${t.id}">Remover</button>` : ''}
+        </div>`).join('') : '<div class="lock" style="color:var(--muted);font-size:12.5px;">Sem etiquetas neste dia.</div>'}
+    </div>
+    ${state.role==='gerente' ? `
+      <div class="add-row" id="addTagRow">
+        <input type="text" id="tagText" placeholder="Texto do aviso" style="flex:1;min-width:120px;">
+        ${TAG_COLORS.map(c=>`<div class="color-dot tag-${c}-dot" data-color="${c}" style="background:var(--${c==='red'?'coral':c==='gold'?'gold':c==='purple'?'ink':c})"></div>`).join('')}
+        <button class="btn gold" id="addTagBtn">Adicionar</button>
+      </div>` : ''}
+
+    <div class="section-label">Avisos dos colaboradores (consultas, atestados)</div>
+    <div class="entry-list" id="noticeList">
+      ${dayNotices.length ? dayNotices.map(n=>`
+        <div class="entry">
+          <div class="txt"><span class="k">${n.sellerName} — ${n.type}</span><span class="lock">${n.text || ''}</span></div>
+          ${(state.role==='gerente' || (state.role==='vendedor' && n.sellerId===state.currentSellerId)) ? `<button class="btn ghost" data-remove-notice="${n.id}">Remover</button>` : ''}
+        </div>`).join('') : '<div class="lock" style="color:var(--muted);font-size:12.5px;">Nenhum aviso registrado.</div>'}
+    </div>
+    ${state.role==='vendedor' && state.currentSellerId ? `
+      <div class="add-row" id="addNoticeRow">
+        <select id="noticeType">${NOTICE_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+        <input type="text" id="noticeText" placeholder="Detalhe (opcional)" style="flex:1;min-width:120px;">
+        <button class="btn gold" id="addNoticeBtn">Adicionar</button>
+      </div>` : ''}
+  `;
+
+  document.getElementById('closeModal').onclick = closeModal;
+  overlay.classList.add('open');
+
+  let pickedColor = TAG_COLORS[0];
+  modal.querySelectorAll('[data-color]').forEach(dot=>{
+    dot.onclick = ()=>{ modal.querySelectorAll('[data-color]').forEach(d=>d.classList.remove('picked')); dot.classList.add('picked'); pickedColor = dot.dataset.color; };
+  });
+
+  const addShiftBtn = document.getElementById('addShiftBtn');
+  if(addShiftBtn) addShiftBtn.onclick = async ()=>{
+    const sellerId = document.getElementById('shiftSeller').value;
+    const seller = state.sellers.find(s=>s.id===sellerId);
+    if(!seller) return;
+    addShiftBtn.disabled = true;
+    try{
+      await db.collection('schedule').add({date:iso, sellerId, sellerName:seller.name, type:document.getElementById('shiftType').value});
+    }catch(e){ console.error(e); alert('Não foi possível salvar a escala. Verifique sua conexão.'); }
+    addShiftBtn.disabled = false;
+  };
+  modal.querySelectorAll('[data-remove-shift]').forEach(b=>{
+    b.onclick = async ()=>{
+      try{ await db.collection('schedule').doc(b.dataset.removeShift).delete(); }
+      catch(e){ console.error(e); alert('Não foi possível remover.'); }
+    };
+  });
+
+  const addTagBtn = document.getElementById('addTagBtn');
+  if(addTagBtn) addTagBtn.onclick = async ()=>{
+    const text = document.getElementById('tagText').value.trim();
+    if(!text) return;
+    addTagBtn.disabled = true;
+    try{
+      await db.collection('tags').add({date:iso, text, color:pickedColor});
+    }catch(e){ console.error(e); alert('Não foi possível salvar a etiqueta. Verifique sua conexão.'); }
+    addTagBtn.disabled = false;
+  };
+  modal.querySelectorAll('[data-remove-tag]').forEach(b=>{
+    b.onclick = async ()=>{
+      try{ await db.collection('tags').doc(b.dataset.removeTag).delete(); }
+      catch(e){ console.error(e); alert('Não foi possível remover.'); }
+    };
+  });
+
+  const addNoticeBtn = document.getElementById('addNoticeBtn');
+  if(addNoticeBtn) addNoticeBtn.onclick = async ()=>{
+    const seller = state.sellers.find(s=>s.id===state.currentSellerId);
+    if(!seller) return;
+    addNoticeBtn.disabled = true;
+    try{
+      await db.collection('notices').add({date:iso, sellerId:seller.id, sellerName:seller.name, type:document.getElementById('noticeType').value, text:document.getElementById('noticeText').value.trim()});
+    }catch(e){ console.error(e); alert('Não foi possível salvar o aviso. Verifique sua conexão.'); }
+    addNoticeBtn.disabled = false;
+  };
+  modal.querySelectorAll('[data-remove-notice]').forEach(b=>{
+    b.onclick = async ()=>{
+      try{ await db.collection('notices').doc(b.dataset.removeNotice).delete(); }
+      catch(e){ console.error(e); alert('Não foi possível remover.'); }
+    };
+  });
+}
+function closeModal(){ currentModalDate = null; document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay')?.addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
+
+/* ---------- Trips ---------- */
+function renderTrips(){
+  const panel = document.getElementById('panel-viagens');
+  const today = todayISO();
+  const sorted = [...state.trips].sort((a,b)=> a.departureDate.localeCompare(b.departureDate));
+  const canPickSeller = state.role==='gerente';
+
+  panel.innerHTML = `
+    <div class="trip-form">
+      <h3>Registrar embarque de cliente</h3>
+      <div class="field"><label>Nome do cliente</label><input type="text" id="tClient" placeholder="Ex: Maria Souza"></div>
+      <div class="field"><label>Data do embarque</label><input type="date" id="tDate"></div>
+      <div class="field"><label>Destino</label><select id="tDestino"><option value="Nacional">Nacional</option><option value="Internacional">Internacional</option></select></div>
+      <div class="field full"><label>Recibo da venda</label><input type="text" id="tReceipt" placeholder="Número do recibo/pedido"></div>
+      <div class="field full"><label>Anotações</label><textarea id="tNotes" rows="2" placeholder="Ex: cliente pediu bagagem extra, voo com conexão, levar documento X..." style="resize:vertical;font-family:'Inter';"></textarea></div>
+      ${canPickSeller ? `<div class="field full"><label>Colaborador responsável</label>
+        <select id="tSeller">${state.sellers.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select></div>` : ''}
+      <div class="field full"><button class="btn gold" id="addTripBtn">Adicionar viagem</button></div>
+    </div>
+
+    <div class="stub-list" id="stubList">
+      ${sorted.length ? sorted.map(t=>{
+        const diff = daysBetween(t.departureDate, today);
+        const checkinDays = t.destino === 'Internacional' ? 1 : 2;
+        const [y,m,d] = t.departureDate.split('-');
+        const badges = [];
+        if(diff>=0 && diff<=7) badges.push(`<span class="badge flight">Checar voo em ${diff===7?'7 dias':diff+'d'}</span>`);
+        if(diff>=0 && diff<=checkinDays) badges.push(`<span class="badge checkin">Check-in liberado</span>`);
+        if(diff<0) badges.push(`<span class="badge ok">Viagem já embarcada</span>`);
+        const canDelete = state.role==='gerente' || t.sellerId===state.currentSellerId;
+        return `<div class="stub">
+          <div class="side"><div class="d">${d}</div><div class="m">${MONTHS[parseInt(m,10)-1].slice(0,3)}</div></div>
+          <div class="main">
+            <div class="client">${t.clientName}</div>
+            <div class="meta"><span>Colaborador: ${t.sellerName}</span><span>Destino: ${t.destino||'Nacional'}</span><span>Recibo: ${t.receipt||'—'}</span></div>
+            ${t.notes ? `<div class="meta" style="color:var(--ink-soft);font-style:italic;">${t.notes}</div>` : ''}
+            <div class="badges">${badges.join('')}</div>
+          </div>
+          ${canDelete ? `<button class="btn ghost" style="align-self:center;margin-right:10px;" data-remove-trip="${t.id}">Remover</button>` : ''}
+        </div>`;
+      }).join('') : '<div class="empty-state">Nenhuma viagem cadastrada ainda.</div>'}
+    </div>
+  `;
+
+  const addTripBtn = document.getElementById('addTripBtn');
+  addTripBtn.onclick = async ()=>{
+    const clientName = document.getElementById('tClient').value.trim();
+    const departureDate = document.getElementById('tDate').value;
+    const destino = document.getElementById('tDestino').value;
+    const receipt = document.getElementById('tReceipt').value.trim();
+    const notes = document.getElementById('tNotes').value.trim();
+    if(!clientName || !departureDate){ alert('Preencha nome do cliente e data do embarque.'); return; }
+    let sellerId, sellerName;
+    if(canPickSeller){
+      sellerId = document.getElementById('tSeller').value;
+      const s = state.sellers.find(s=>s.id===sellerId);
+      sellerName = s ? s.name : '—';
+    } else {
+      const s = state.sellers.find(s=>s.id===state.currentSellerId);
+      sellerId = s ? s.id : null; sellerName = s ? s.name : '—';
+    }
+    addTripBtn.disabled = true;
+    try{
+      await db.collection('trips').add({clientName, departureDate, destino, receipt, notes, sellerId, sellerName, createdAt: todayISO()});
+    }catch(e){ console.error(e); alert('Não foi possível salvar a viagem. Verifique sua conexão.'); }
+    addTripBtn.disabled = false;
+  };
+  panel.querySelectorAll('[data-remove-trip]').forEach(b=>{
+    b.onclick = async ()=>{
+      try{ await db.collection('trips').doc(b.dataset.removeTrip).delete(); }
+      catch(e){ console.error(e); alert('Não foi possível remover.'); }
+    };
+  });
+}
+
+/* ---------- Sellers ---------- */
+function renderSellers(){
+  const panel = document.getElementById('panel-vendedores');
+  panel.innerHTML = `
+    <div class="seller-form">
+      <h3>Adicionar usuário</h3>
+      <div class="field full"><label>Nome</label><input type="text" id="newSellerName" placeholder="Nome completo"></div>
+      <div class="field"><label>Papel</label>
+        <select id="newSellerRole">
+          <option value="vendedor">Colaborador</option>
+          <option value="gerente">Gerente</option>
+        </select>
+      </div>
+      <div class="field"><label>Senha (4 números)</label><input type="password" inputmode="numeric" maxlength="4" id="newSellerPin" placeholder="••••"></div>
+      <div class="field full"><button class="btn gold" id="addSellerBtn">Adicionar à filial</button></div>
+      <div class="field full" id="sellerFormError" style="color:var(--coral);font-size:12.5px;"></div>
+    </div>
+    <div id="sellerRows">
+      ${state.sellers.length ? state.sellers.map(s=>`
+        <div class="seller-row">
+          <div class="name"><span class="swatch" style="background:${sellerColor(s.id)}"></span>${s.name}</div>
+          <button class="btn ghost" data-remove-seller="${s.id}">Excluir</button>
+        </div>`).join('') : '<div class="empty-state">Nenhum colaborador cadastrado ainda.</div>'}
+    </div>
+  `;
+  const addSellerBtn = document.getElementById('addSellerBtn');
+  addSellerBtn.onclick = async ()=>{
+    const name = document.getElementById('newSellerName').value.trim();
+    const role = document.getElementById('newSellerRole').value;
+    const pin = document.getElementById('newSellerPin').value.trim();
+    const errBox = document.getElementById('sellerFormError');
+    errBox.textContent = '';
+    if(!name){ errBox.textContent = 'Informe o nome.'; return; }
+    if(!/^\d{4}$/.test(pin)){ errBox.textContent = 'A senha deve ter exatamente 4 números.'; return; }
+    addSellerBtn.disabled = true;
+    try{
+      // cria o login numa instância separada do Firebase para não trocar
+      // a sessão de quem está cadastrando (o gerente continua logado).
+      const cred = await secondaryAuth.createUserWithEmailAndPassword(loginEmail(name), loginPassword(pin));
+      const newUid = cred.user.uid;
+      await secondaryAuth.signOut();
+      let sellerId = null;
+      if(role==='vendedor'){
+        const sellerDoc = await db.collection('sellers').add({name, accountUid:newUid});
+        sellerId = sellerDoc.id;
+      }
+      await db.collection('accounts').doc(newUid).set({name, role, sellerId});
+    }catch(e){
+      console.error(e);
+      errBox.textContent = e.code==='auth/email-already-in-use'
+        ? 'Já existe um usuário com esse nome. Use o nome completo (ex: com sobrenome).'
+        : 'Não foi possível criar o usuário. Verifique sua conexão.';
+    }
+    addSellerBtn.disabled = false;
+  };
+  panel.querySelectorAll('[data-remove-seller]').forEach(b=>{
+    b.onclick = async ()=>{
+      if(!confirm('Excluir este colaborador? Ele perderá o acesso ao sistema. O histórico de escalas e viagens já registrados será mantido.')) return;
+      const seller = state.sellers.find(s=>s.id===b.dataset.removeSeller);
+      try{
+        if(seller && seller.accountUid) await db.collection('accounts').doc(seller.accountUid).delete();
+        await db.collection('sellers').doc(b.dataset.removeSeller).delete();
+      }catch(e){ console.error(e); alert('Não foi possível remover.'); }
+    };
+  });
+}
+</script>
+</body>
+</html>
